@@ -4,3 +4,5 @@ The building code folder contains the code for the three models: (1) full model,
 space in the building. There is code to generate a number of trajectories and perform statistical analysis on those trajectories. This code can be used to generate usage and collisions statistics.
 
 The survey analysis folder contains the code for analyzing the survey data.
+
+For help with understanding or using any of the code, contact ethansd@vt.edu
