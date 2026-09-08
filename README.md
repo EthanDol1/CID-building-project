@@ -51,21 +51,27 @@ data/       raw inputs (spreadsheets) and simulation output, one folder per mode
 results/    generated figures
 ```
 
-## The four models
+## The models
 
 Each model is defined by whether it has access to the real building topology and
-whether its transition probabilities come from the diary data.
+whether its transition probabilities come from the diary data. The first three are the
+full model and the two null models reported in the paper. The fourth is an additional
+null model included here but not part of the reported analysis.
 
-| Model | Script | Topology | Transition probabilities |
-|---|---|---|---|
-| Full model | `models/fullModel.m` | true | diary-informed |
-| Random topology | `models/randTopModel.m` | degree-preserving rewiring | diary-informed |
-| Equal probability | `models/eqProbModel.m` | true | uniform over each node's edges |
-| Random probability | `models/randProbModel.m` | true | uniform random weights, normalised per node |
+| Model | Script | Topology | Transition probabilities | In the paper |
+|---|---|---|---|---|
+| Full model | `models/fullModel.m` | true | diary-informed | yes |
+| Random topology | `models/randTopModel.m` | degree-preserving rewiring | diary-informed | yes |
+| Equal probability | `models/eqProbModel.m` | true | uniform over each node's edges | yes |
+| Random probability | `models/randProbModel.m` | true | uniform random weights, normalised per node | no |
 
 The random topology and random probability models redraw their randomised component at
 the start of every iteration, so a run samples across randomisations rather than
 characterising one arbitrary draw.
+
+`randProbModel` and its output in `data/randProbModel_data/` are provided for anyone
+wanting to extend the comparison. `analysis/shannon_entropy.m` and
+`analysis/model_results.m` cover only the three models reported in the paper.
 
 Each model runs 200 iterations of a full day for all 594 residents and writes its
 trajectory array to `data/<model>_data/`. The arrays are `96 x 594 x 200`: time steps
@@ -122,7 +128,6 @@ each of 96 time steps, for every iteration.
 | `diary_convergence.m` | convergence of diary-derived parameters as diaries accumulate |
 | `gen_traj_FM.m`, `gen_traj_EP.m`, `gen_traj_RT.m` | example single-day trajectories |
 | `randA_graph.m` | circle-layout plot of a randomised network |
-| `leave_one_out.m` → `leave_one_out_analysis.m` | robustness check refitting the model with each diary held out (about 20 minutes) |
 
 ## Shared functions (`models/lib/`)
 

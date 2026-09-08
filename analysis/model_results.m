@@ -55,41 +55,41 @@ c = multcompare(stats);
 c = multcompare(stats);
 
 %% Ranking distances from the survey
-% Each vector below is an ORDERING: position k holds the code of the room type
-% ranked kth, from least to most. Codes are C = 1, S = 2, E = 3, H = 4, B = 5.
+% Kendall tau distance is defined over pairs of ITEMS: for each pair, do the
+% two rankings disagree about which comes first. kendallTauDistance therefore
+% takes each ranking as a RANK VECTOR, position k holding the rank of room type
+% k in the fixed order C, S, E, H, B. Rank 1 is least, rank 5 is most.
 %
-% Kendall tau distance is defined over pairs of ITEMS - for each pair, do the
-% two rankings disagree about which comes first - so it needs each ranking as a
-% rank vector, r(item) = the position that item holds. The orderings below are
-% converted with toRanks before the distance is taken. Passing the orderings
-% straight in would compare room-type codes at matching positions, which is a
-% different and meaningless quantity.
+% The orderings the rankings were read off as, least to most, were:
 %
 %   survey_use = [C S E B H];   survey_col = [B S E C H];
 %   fm_use     = [C E S B H];   fm_col     = [B C S E H];
 %   ep_use     = [C E S B H];   ep_col     = [C E B S H];
 %   rt_use     = [C E S B H];   rt_col     = [C S B E H];
+%
+% Written below as rank vectors. For example survey_col reads B < S < E < C < H,
+% so B holds rank 1, S rank 2, E rank 3, C rank 4 and H rank 5; laid out in
+% C, S, E, H, B order that is [4 2 3 5 1].
+%
+%                C  S  E  H  B
+survey_use    = [1  2  3  5  4];
+survey_col    = [4  2  3  5  1];
 
-survey_use = [1 2 3 5 4];
-survey_col = [5 2 3 1 4];
+fm_use        = [1  3  2  5  4];
+fm_col        = [2  3  4  5  1];
 
-fm_use = [1 3 2 5 4];
-fm_col = [5 1 2 3 4];
+ep_use        = [1  3  2  5  4];
+ep_col        = [1  4  2  5  3];
 
-ep_use = [1 3 2 5 4];
-ep_col = [1 3 5 2 4];
-
-rt_use = [1 3 2 5 4];
-rt_col = [1 2 5 3 4];
+rt_use        = [1  3  2  5  4];
+rt_col        = [1  2  4  5  3];
 
 use_rankings = {fm_use, ep_use, rt_use};
 col_rankings = {fm_col, ep_col, rt_col};
 
-toRanks = @(ordering) accumarray(ordering(:), (1:numel(ordering))');
-
 for i = 1:length(use_rankings)
-    use_dist = kendallTauDistance(toRanks(survey_use), toRanks(use_rankings{i}));
-    col_dist = kendallTauDistance(toRanks(survey_col), toRanks(col_rankings{i}));
+    use_dist = kendallTauDistance(survey_use, use_rankings{i});
+    col_dist = kendallTauDistance(survey_col, col_rankings{i});
     disp(modelLabels(i) + " Ranking Distance from Survey:")
     disp("usage ranking distance is: " + use_dist)
     disp("collision ranking distance is: " + col_dist)

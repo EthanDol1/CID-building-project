@@ -28,7 +28,7 @@ overwrite = false;  % set true to replace an existing CID_building.mat
 
 %% Section 0: input and output files
 % EDIT THIS to point at CID_building.xlsx wherever it lives on your machine.
-buildingFile = "C:\Users\ethan\OneDrive\Desktop\PLOS One Paper\Copy_of_BUILD Code\data\CID_building.xlsx";
+buildingFile = "C:\Users\ethan\OneDrive\Documents\GitHub\CID-building-project\data\CID_building.xlsx";
 outputFile = "CID_building.mat";  % written to the current folder
 
 if ~isfile(buildingFile)

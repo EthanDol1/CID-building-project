@@ -11,14 +11,14 @@ opts.Sheet = "nodes";
 opts.DataRange = "A1:A410";
 opts.VariableNames = "Nodes";
 opts.VariableTypes = "string";
-V = readtable("C:\Users\ethan\OneDrive\Desktop\PLOS One Paper\Copy_of_BUILD Code\data\CID_building.xlsx", opts, "UseExcel", false);
+V = readtable("C:\Users\ethan\OneDrive\Documents\GitHub\CID-building-project\data\CID_building.xlsx", opts, "UseExcel", false);
 clear opts
 opts = spreadsheetImportOptions("NumVariables", 2);
 opts.Sheet = "edges";
 opts.DataRange = "A1:B489";
 opts.VariableNames = ["Edge 1", "Edge 2"];
 opts.VariableTypes = ["string", "string"];
-E = readtable("C:\Users\ethan\OneDrive\Desktop\PLOS One Paper\Copy_of_BUILD Code\data\CID_building.xlsx", opts, "UseExcel", false);
+E = readtable("C:\Users\ethan\OneDrive\Documents\GitHub\CID-building-project\data\CID_building.xlsx", opts, "UseExcel", false);
 clear opts
 
 V = table2array(V);
