@@ -21,15 +21,11 @@ load('eqProbModel_data.mat')
 epUseData = useData;
 epColData = collisionData;
 
-load('randProbModel_data.mat')
-rpUseData = useData;
-rpColData = collisionData;
-
 load('randTopModel_data.mat')
 rtUseData = useData;
 rtColData = collisionData;
 
-modelLabels = ["Full Model", "Equal Probability", "Random Probability", "Random Topology"];
+modelLabels = ["Full Model", "Equal Probability", "Random Topology"];
 
 %% Kruskal-Wallis tests and multiple comparisons
 % Columns 3, 4, 5, 6 and 8 are the five room types the survey asked about:
@@ -52,14 +48,6 @@ c = multcompare(stats);
 
 %%
 
-[p, tbl, stats] = kruskalwallis(rpUseData(:,surveyCols));
-c = multcompare(stats);
-
-[p, tbl, stats] = kruskalwallis(rpColData(:,surveyCols));
-c = multcompare(stats);
-
-%%
-
 [p, tbl, stats] = kruskalwallis(rtUseData(:,surveyCols));
 c = multcompare(stats);
 
@@ -67,13 +55,19 @@ c = multcompare(stats);
 c = multcompare(stats);
 
 %% Ranking distances from the survey
-% Each vector is an ordering of the five room types from least to most, coded
-% C = 1, S = 2, E = 3, H = 4, B = 5:
+% Each vector below is an ORDERING: position k holds the code of the room type
+% ranked kth, from least to most. Codes are C = 1, S = 2, E = 3, H = 4, B = 5.
+%
+% Kendall tau distance is defined over pairs of ITEMS - for each pair, do the
+% two rankings disagree about which comes first - so it needs each ranking as a
+% rank vector, r(item) = the position that item holds. The orderings below are
+% converted with toRanks before the distance is taken. Passing the orderings
+% straight in would compare room-type codes at matching positions, which is a
+% different and meaningless quantity.
 %
 %   survey_use = [C S E B H];   survey_col = [B S E C H];
 %   fm_use     = [C E S B H];   fm_col     = [B C S E H];
 %   ep_use     = [C E S B H];   ep_col     = [C E B S H];
-%   rp_use     = [C E S B H];   rp_col     = [C E S B H];
 %   rt_use     = [C E S B H];   rt_col     = [C S B E H];
 
 survey_use = [1 2 3 5 4];
@@ -85,18 +79,17 @@ fm_col = [5 1 2 3 4];
 ep_use = [1 3 2 5 4];
 ep_col = [1 3 5 2 4];
 
-rp_use = [1 3 2 5 4];
-rp_col = [1 3 2 5 4];
-
 rt_use = [1 3 2 5 4];
 rt_col = [1 2 5 3 4];
 
-use_rankings = {fm_use, ep_use, rp_use, rt_use};
-col_rankings = {fm_col, ep_col, rp_col, rt_col};
+use_rankings = {fm_use, ep_use, rt_use};
+col_rankings = {fm_col, ep_col, rt_col};
+
+toRanks = @(ordering) accumarray(ordering(:), (1:numel(ordering))');
 
 for i = 1:length(use_rankings)
-    use_dist = kendallTauDistance(survey_use, use_rankings{i});
-    col_dist = kendallTauDistance(survey_col, col_rankings{i});
+    use_dist = kendallTauDistance(toRanks(survey_use), toRanks(use_rankings{i}));
+    col_dist = kendallTauDistance(toRanks(survey_col), toRanks(col_rankings{i}));
     disp(modelLabels(i) + " Ranking Distance from Survey:")
     disp("usage ranking distance is: " + use_dist)
     disp("collision ranking distance is: " + col_dist)
@@ -109,8 +102,8 @@ useKeep = setdiff(1:13, 2);
 useLabels = {'My dorm','Comm. Assembly','Stairs','Elevators','Hallways', ...
     'Kitchens','Bathrooms','LLC Lounges','Mezzanine','Other','Outside','Lounges'};
 
-combinedUseDataMean = [mean(fmUseData)' mean(epUseData)' mean(rpUseData)' mean(rtUseData)'];
-combinedUseDataSd   = [std(fmUseData)'  std(epUseData)'  std(rpUseData)'  std(rtUseData)'];
+combinedUseDataMean = [mean(fmUseData)' mean(epUseData)' mean(rtUseData)'];
+combinedUseDataSd   = [std(fmUseData)'  std(epUseData)'  std(rtUseData)'];
 combinedUseDataMean = combinedUseDataMean(useKeep,:);
 combinedUseDataSd   = combinedUseDataSd(useKeep,:);
 
@@ -137,8 +130,8 @@ colKeep = setdiff(1:13, [2 11 12]);
 colLabels = {'My dorm','Comm. Assembly','Stairs','Elevators','Hallways', ...
     'Kitchens','Bathrooms','LLC Lounges','Mezzanine','Lounges'};
 
-combinedColDataMean = [mean(fmColData)' mean(epColData)' mean(rpColData)' mean(rtColData)'];
-combinedColDataSd   = [std(fmColData)'  std(epColData)'  std(rpColData)'  std(rtColData)'];
+combinedColDataMean = [mean(fmColData)' mean(epColData)' mean(rtColData)'];
+combinedColDataSd   = [std(fmColData)'  std(epColData)'  std(rtColData)'];
 combinedColDataMean = combinedColDataMean(colKeep,:);
 combinedColDataSd   = combinedColDataSd(colKeep,:);
 

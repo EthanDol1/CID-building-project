@@ -24,12 +24,10 @@ if ~isfolder(resultsDir), mkdir(resultsDir); end
 
 fm = zeros(96,594,200);
 ep = zeros(96,594,200);
-rp = zeros(96,594,200);
 rt = zeros(96,594,200);
 
 load("fm_data.mat"); fm(:,:,:) = fm_simulation_matrix;
 load("ep_data.mat"); ep(:,:,:) = ep_simulation_matrix;
-load('rp_data.mat'); rp(:,:,:) = rp_simulation_matrix;
 load("rt_data.mat"); rt(:,:,:) = rt_simulation_matrix;
 
 load('master_list.mat')   % masterList: column 4 is each node's room-type pattern
@@ -37,8 +35,8 @@ load('master_list.mat')   % masterList: column 4 is each node's room-type patter
 %% Models under analysis
 % The order here sets the column order of se, mean_se and std_se, and must
 % match modelLabels and the colour rows used by every figure below.
-modelData = {fm, ep, rp, rt};
-modelLabels = ["Full Model", "Equal Probability", "Random Probability", "Random Topology"];
+modelData = {fm, ep, rt};
+modelLabels = ["Full Model", "Equal Probability", "Random Topology"];
 
 %% Entropy per iteration
 % For each iteration: drop trajectories that barely move, recode nodes as
@@ -119,8 +117,7 @@ pAvg = pAvg / nIterations;
 % Named aliases for the columns of se, in modelData order.
 se_fm = se{1};
 se_ep = se{2};
-se_rp = se{3};
-se_rt = se{4};
+se_rt = se{3};
 
 % Colours are generated to fit however many series each figure draws, so
 % adding or removing a model needs no edit here. parula runs blue -> green ->
@@ -145,8 +142,8 @@ grid on
 %% Mean entropy per model
 % Computed from the se vectors above, so the chart always reflects the data
 % loaded at the top of this script.
-mean_se = [mean(se_fm) mean(se_ep) mean(se_rp) mean(se_rt)];
-std_se  = [std(se_fm) std(se_ep) std(se_rp) std(se_rt)];
+mean_se = [mean(se_fm) mean(se_ep) mean(se_rt)];
+std_se  = [std(se_fm) std(se_ep) std(se_rt)];
 
 figure
 b = bar(1:numel(mean_se), mean_se, 'FaceColor', 'flat');
@@ -173,7 +170,7 @@ hold off
 % for them to sit side by side without overlapping or being clipped.
 figure('Units','inches','Position',[1 1 13 8]);
 x = repmat(1:numel(modelLabels), nIterations, 1);
-swarmchart(x, [se_fm, se_ep, se_rp, se_rt], 30, modelColors(size(x,2)), 'filled')
+swarmchart(x, [se_fm, se_ep, se_rt], 30, modelColors(size(x,2)), 'filled')
 ylabel('$H$','Interpreter','latex')
 ax = gca;
 ax.XTick = 1:numel(modelLabels);
