@@ -124,6 +124,30 @@ se_rt = se{3};
 % yellow and stays distinguishable for any count.
 modelColors = @(n) parula(n);
 
+%% Does model type affect entropy? One-way ANOVA with Tukey post-hoc
+% These are the statistics quoted in the caption of the entropy figure. They
+% are computed here so that they update whenever the underlying data changes.
+anovaY = [se_fm; se_ep; se_rt];
+anovaGroup = [repmat(modelLabels(1), nIterations, 1); ...
+              repmat(modelLabels(2), nIterations, 1); ...
+              repmat(modelLabels(3), nIterations, 1)];
+
+[pModel, anovaTbl, anovaStats] = anova1(anovaY, anovaGroup, 'off');
+tukey = multcompare(anovaStats, 'CType', 'tukey-kramer', 'Display', 'off');
+
+Fstat  = anovaTbl{2,5};
+dfModel = anovaTbl{2,3};
+dfError = anovaTbl{3,3};
+
+fprintf('\nOne-way ANOVA, effect of model on block entropy:\n');
+fprintf('  F(%d,%d) = %.4g, p = %.3g\n', dfModel, dfError, Fstat, pModel);
+
+fprintf('Tukey-Kramer post-hoc comparisons:\n');
+for r = 1:size(tukey,1)
+    fprintf('  %-20s vs %-20s p = %.3g\n', ...
+        modelLabels(tukey(r,1)), modelLabels(tukey(r,2)), tukey(r,6));
+end
+
 %% Mean pattern-string distribution per model
 % One curve per model, averaged over its 200 iterations. The x axis indexes
 % the 144 ordered pattern pairs in T; a flatter curve spreads probability over
